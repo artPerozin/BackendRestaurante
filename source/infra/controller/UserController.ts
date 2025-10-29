@@ -1,6 +1,4 @@
 import RepositoryFactoryInterface from "../../domain/Interfaces/RepositoryFactoryInterface";
-import CreateFeedback from "../../useCases/createFeedback/CreateFeedback";
-import CreateFeedbackInput from "../../useCases/createFeedback/CreateFeedbackInput";
 import CreateUser from "../../useCases/createUser/CreateUser";
 import CreateUserInput from "../../useCases/createUser/CreateUserInput";
 import CreateUserOutput from "../../useCases/createUser/CreateUserOutput";
