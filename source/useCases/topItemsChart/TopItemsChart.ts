@@ -3,7 +3,7 @@ import RepositoryFactoryInterface from "../../domain/Interfaces/RepositoryFactor
 import TopItemsChartInput from "./TopItemsChartInput";
 import TopItemsChartOutput from "./TopItemsChartOutput";
 
-export default class PerformanceByRegionChart {
+export default class TopItemsChart {
 
     readonly dashboard: DashboardRepositoryInterface;
 

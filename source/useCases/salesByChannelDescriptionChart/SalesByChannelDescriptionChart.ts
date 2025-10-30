@@ -3,7 +3,7 @@ import RepositoryFactoryInterface from "../../domain/Interfaces/RepositoryFactor
 import SalesByChannelDescriptionChartInput from "./SalesByChannelDescriptionChartInput";
 import SalesByChannelDescriptionChartOutput from "./SalesByChannelDescriptionChartOutput";
 
-export default class PerformanceByRegionChart {
+export default class SalesByChannelDescriptionChart {
 
     readonly dashboard: DashboardRepositoryInterface;
 
