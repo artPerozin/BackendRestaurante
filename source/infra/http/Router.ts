@@ -1,12 +1,12 @@
 import RepositoryFactoryInterface from "../../domain/Interfaces/RepositoryFactoryInterface";
 import Http from "./Http";
-import UserRoutes from "./Routes/UserRoutes";
+import DashboardRoutes from "./Routes/DashboardRoutes";
 export default class Router {
 
-	protected userRoutes: UserRoutes;
+	protected dashboardRoutes: DashboardRoutes;
 
 	constructor(readonly http: Http, readonly repositoryFactory: RepositoryFactoryInterface) {
-		this.userRoutes = new UserRoutes(this.http, this.repositoryFactory);
+		this.dashboardRoutes = new DashboardRoutes(this.http, this.repositoryFactory);
 	}
 
 	init() {
@@ -15,6 +15,6 @@ export default class Router {
 				message: "welcome"
 			}
 		});
-		this.userRoutes.init();
+		this.dashboardRoutes.init();
 	}
 }
