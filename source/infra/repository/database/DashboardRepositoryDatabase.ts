@@ -1,11 +1,11 @@
 import { CashFlowByDayDTO } from "../../../domain/DTO/CashFlowByDayDto";
 import { CustomerRetentionDTO } from "../../../domain/DTO/CustomerRetentionDto";
-import { DeliveryLocationDTO } from "../../../domain/DTO/DeliveryLocationDTO";
+import { DeliveryLocationDTO } from "../../../domain/DTO/DeliveryLocationDto";
 import { PaymentsByTypeDTO } from "../../../domain/DTO/PaymentsByTypeDto";
-import { RegionPerformanceDTO } from "../../../domain/DTO/RegionPerformanceDTO";
-import { SalesByChannelDescriptionDTO } from "../../../domain/DTO/SalesByChannelDescriptionDTO";
-import { SalesByChannelTypeDTO } from "../../../domain/DTO/SalesByChannelTypeDTO";
-import { TopItemDTO } from "../../../domain/DTO/TopItemDTO";
+import { RegionPerformanceDTO } from "../../../domain/DTO/RegionPerformanceDto";
+import { SalesByChannelDescriptionDTO } from "../../../domain/DTO/SalesByChannelDescriptionDto";
+import { SalesByChannelTypeDTO } from "../../../domain/DTO/SalesByChannelTypeDto";
+import { TopItemDTO } from "../../../domain/DTO/TopItemDto";
 import { TemporalEnum } from "../../../domain/Enums/TemporalEnum";
 import DashboardRepositoryInterface from "../../../domain/Interfaces/DashboardRepositoryInterface";
 import Connection from "../../database/Connection";
