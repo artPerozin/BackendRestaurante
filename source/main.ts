@@ -22,11 +22,11 @@ async function bootstrap() {
     const http = new ExpressHttp(auth);
     const router = new Router(http, repositoryFactory);
 
-    const port = 5001
+    const port = 8000;
 
     router.init();
     http.listen(port);
-    console.log(`Running... on ${port}`);
+    console.log(`Running on ${port}`);
 }
 
 bootstrap();
