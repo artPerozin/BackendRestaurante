@@ -1,6 +1,5 @@
 import DashboardRepositoryInterface from "../../domain/Interfaces/DashboardRepositoryInterface";
 import RepositoryFactoryInterface from "../../domain/Interfaces/RepositoryFactoryInterface";
-import PerformanceByRegionChartInput from "./PerformanceByRegionChartInput";
 import PerformanceByRegionChartOutput from "./PerformanceByRegionChartOutput";
 
 export default class PerformanceByRegionChart {
@@ -11,8 +10,8 @@ export default class PerformanceByRegionChart {
         this.dashboard = repositoryFactory.createDashboardRepository();
     }
 
-    async execute(input: PerformanceByRegionChartInput): Promise<PerformanceByRegionChartOutput> {
-        const data = await this.dashboard.getPerformanceByRegion(input);
+    async execute(): Promise<PerformanceByRegionChartOutput> {
+        const data = await this.dashboard.getPerformanceByRegion();
         if (!data || data.length === 0) {
             throw new Error("Sem dados para query");
         }

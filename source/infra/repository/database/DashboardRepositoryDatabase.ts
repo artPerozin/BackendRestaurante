@@ -15,7 +15,7 @@ import { WeeklyDeliveriesDTO } from "../../../domain/DTO/WeeklyDeliveriesDTO";
 export default class DashboardRepositoryDatabase implements DashboardRepositoryInterface {
     constructor(protected readonly connection: Connection) {}
 
-    async getPerformanceByRegion(period: TemporalInputDto): Promise<RegionPerformanceDTO[]> {
+    async getPerformanceByRegion(): Promise<RegionPerformanceDTO[]> {
         const query = `
             SELECT 
                 da.neighborhood,
@@ -27,14 +27,13 @@ export default class DashboardRepositoryDatabase implements DashboardRepositoryI
             JOIN delivery_addresses da ON da.sale_id = s.id
             WHERE s.sale_status_desc = 'COMPLETED'
               AND s.delivery_seconds IS NOT NULL
-              AND s.created_at >= $1
-              AND s.created_at <= $2
             GROUP BY da.neighborhood, da.city
             HAVING COUNT(*) >= 10
-            ORDER BY avg_delivery_minutes DESC;
+            ORDER BY avg_delivery_minutes ASC
+            LIMIT 100;
         `;
 
-        const result = await this.connection.execute(query, [period.start_date, period.end_date]);
+        const result = await this.connection.execute(query);
         return result.map((row: any) => new RegionPerformanceDTO(row));
     }
 
@@ -102,7 +101,7 @@ export default class DashboardRepositoryDatabase implements DashboardRepositoryI
         const result = await this.connection.execute(query, [period.start_date, period.end_date]);
         return result.map((row: any) => new CashFlowByDayDTO(row));
     }
-    
+
     async getSalesByChannelDescription(period: TemporalInputDto): Promise<SalesByChannelDescriptionDTO[]> {
         const query = `
             SELECT

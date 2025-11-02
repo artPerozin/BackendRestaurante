@@ -12,7 +12,6 @@ import PaymentsByTypeChartChart from "../../useCases/paymentsByTypeChart/Payment
 import PaymentsByTypeChartInput from "../../useCases/paymentsByTypeChart/PaymentsByTypeChartInput";
 import PaymentsByTypeChartOutput from "../../useCases/paymentsByTypeChart/PaymentsByTypeChartOutput";
 import PerformanceByRegionChart from "../../useCases/performanceByRegionChart/PerformanceByRegionChart";
-import PerformanceByRegionChartInput from "../../useCases/performanceByRegionChart/PerformanceByRegionChartInput";
 import PerformanceByRegionChartOutput from "../../useCases/performanceByRegionChart/PerformanceByRegionChartOutput";
 import SalesByChannelDescriptionChart from "../../useCases/salesByChannelDescriptionChart/SalesByChannelDescriptionChart";
 import SalesByChannelDescriptionChartInput from "../../useCases/salesByChannelDescriptionChart/SalesByChannelDescriptionChartInput";
@@ -46,9 +45,9 @@ export default class DashboardController {
         return await paymentsByTypeChart.execute(input);
     }
 
-    async performanceByRegionChart(input: PerformanceByRegionChartInput): Promise<PerformanceByRegionChartOutput> {
+    async performanceByRegionChart(): Promise<PerformanceByRegionChartOutput> {
         const performanceByRegionChart = new PerformanceByRegionChart(this.repositoryFactory);
-        return await performanceByRegionChart.execute(input);
+        return await performanceByRegionChart.execute();
     }
 
     async salesByChannelDescriptionChart(input: SalesByChannelDescriptionChartInput): Promise<SalesByChannelDescriptionChartOutput> {

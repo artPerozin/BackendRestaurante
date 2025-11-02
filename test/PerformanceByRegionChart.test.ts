@@ -3,7 +3,6 @@ import { TemporalInputDto } from "../source/domain/DTO/TemporalInputDto";
 import DashboardRepositoryInterface from "../source/domain/Interfaces/DashboardRepositoryInterface";
 import RepositoryFactoryInterface from "../source/domain/Interfaces/RepositoryFactoryInterface";
 import PerformanceByRegionChart from "../source/useCases/performanceByRegionChart/PerformanceByRegionChart";
-import PerformanceByRegionChartInput from "../source/useCases/performanceByRegionChart/PerformanceByRegionChartInput";
 
 describe("PerformanceByRegionChart", () => {
     let useCase: PerformanceByRegionChart;
@@ -38,10 +37,6 @@ describe("PerformanceByRegionChart", () => {
 
     describe("execute", () => {
         it("deve retornar performance por região quando houver resultados", async () => {
-            const period = new TemporalInputDto({
-                start_date: "2024-01-01 00:00:00",
-                end_date: "2024-01-31 23:59:59",
-            });
 
             const mockPerformanceData: RegionPerformanceDTO[] = [
                 new RegionPerformanceDTO({
@@ -69,63 +64,42 @@ describe("PerformanceByRegionChart", () => {
 
             mockDashboardRepository.getPerformanceByRegion.mockResolvedValue(mockPerformanceData);
 
-            const result = await useCase.execute(period);
+            const result = await useCase.execute();
 
             expect(mockRepositoryFactory.createDashboardRepository).toHaveBeenCalledTimes(1);
-            expect(mockDashboardRepository.getPerformanceByRegion).toHaveBeenCalledWith(period);
             expect(mockDashboardRepository.getPerformanceByRegion).toHaveBeenCalledTimes(1);
             expect(result).toEqual({ data: mockPerformanceData });
             expect(result.data).toHaveLength(3);
         });
 
         it("deve lançar erro quando não houver dados (array vazio)", async () => {
-            const period = new TemporalInputDto({
-                start_date: "2024-01-01 00:00:00",
-                end_date: "2024-01-31 23:59:59",
-            });
 
             mockDashboardRepository.getPerformanceByRegion.mockResolvedValue([]);
 
-            await expect(useCase.execute(period)).rejects.toThrow("Sem dados para query");
-            expect(mockDashboardRepository.getPerformanceByRegion).toHaveBeenCalledWith(period);
+            await expect(useCase.execute()).rejects.toThrow("Sem dados para query");
             expect(mockDashboardRepository.getPerformanceByRegion).toHaveBeenCalledTimes(1);
         });
 
         it("deve lançar erro quando retornar null", async () => {
-            const period = new TemporalInputDto({
-                start_date: "2024-01-01 00:00:00",
-                end_date: "2024-01-31 23:59:59",
-            });
 
             mockDashboardRepository.getPerformanceByRegion.mockResolvedValue(null as any);
 
-            await expect(useCase.execute(period)).rejects.toThrow("Sem dados para query");
-            expect(mockDashboardRepository.getPerformanceByRegion).toHaveBeenCalledWith(period);
+            await expect(useCase.execute()).rejects.toThrow("Sem dados para query");
         });
 
         it("deve lançar erro quando retornar undefined", async () => {
-            const period = new TemporalInputDto({
-                start_date: "2024-01-01 00:00:00",
-                end_date: "2024-01-31 23:59:59",
-            });
 
             mockDashboardRepository.getPerformanceByRegion.mockResolvedValue(undefined as any);
 
-            await expect(useCase.execute(period)).rejects.toThrow("Sem dados para query");
-            expect(mockDashboardRepository.getPerformanceByRegion).toHaveBeenCalledWith(period);
+            await expect(useCase.execute()).rejects.toThrow("Sem dados para query");
         });
 
         it("deve propagar erro do repository", async () => {
-            const period = new TemporalInputDto({
-                start_date: "2024-01-01 00:00:00",
-                end_date: "2024-01-31 23:59:59",
-            });
 
             const dbError = new Error("Database connection failed");
             mockDashboardRepository.getPerformanceByRegion.mockRejectedValue(dbError);
 
-            await expect(useCase.execute(period)).rejects.toThrow("Database connection failed");
-            expect(mockDashboardRepository.getPerformanceByRegion).toHaveBeenCalledWith(period);
+            await expect(useCase.execute()).rejects.toThrow("Database connection failed");
         });
 
         it("deve validar métricas de performance da região", async () => {
@@ -146,7 +120,7 @@ describe("PerformanceByRegionChart", () => {
 
             mockDashboardRepository.getPerformanceByRegion.mockResolvedValue(mockPerformanceData);
 
-            const result = await useCase.execute(period);
+            const result = await useCase.execute();
 
             expect(result.data[0].neighborhood).toBe("Centro");
             expect(result.data[0].city).toBe("Joinville");
@@ -156,10 +130,6 @@ describe("PerformanceByRegionChart", () => {
         });
 
         it("deve retornar regiões ordenadas por tempo médio de entrega (decrescente)", async () => {
-            const period = new TemporalInputDto({
-                start_date: "2024-01-01 00:00:00",
-                end_date: "2024-01-31 23:59:59",
-            });
 
             const mockPerformanceData: RegionPerformanceDTO[] = [
                 new RegionPerformanceDTO({
@@ -187,17 +157,13 @@ describe("PerformanceByRegionChart", () => {
 
             mockDashboardRepository.getPerformanceByRegion.mockResolvedValue(mockPerformanceData);
 
-            const result = await useCase.execute(period);
+            const result = await useCase.execute();
 
             expect(result.data[0].avgDeliveryMinutes).toBeGreaterThanOrEqual(result.data[1].avgDeliveryMinutes);
             expect(result.data[1].avgDeliveryMinutes).toBeGreaterThanOrEqual(result.data[2].avgDeliveryMinutes);
         });
 
         it("deve filtrar regiões com mínimo de entregas (>= 10)", async () => {
-            const period = new TemporalInputDto({
-                start_date: "2024-01-01 00:00:00",
-                end_date: "2024-01-31 23:59:59",
-            });
 
             const mockPerformanceData: RegionPerformanceDTO[] = [
                 new RegionPerformanceDTO({
@@ -218,7 +184,7 @@ describe("PerformanceByRegionChart", () => {
 
             mockDashboardRepository.getPerformanceByRegion.mockResolvedValue(mockPerformanceData);
 
-            const result = await useCase.execute(period);
+            const result = await useCase.execute();
 
             result.data.forEach(region => {
                 expect(region.deliveries).toBeGreaterThanOrEqual(10);

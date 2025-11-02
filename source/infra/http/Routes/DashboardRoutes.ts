@@ -23,8 +23,8 @@ export default class DashboardRoutes implements ModelRoutes {
             return this.dashboardController.paymentsByTypeChart(body);
         });
 
-        this.http.route("post", "/dashboard/performanceByRegionChart", false, async (params: any, body: any) => {
-            return this.dashboardController.performanceByRegionChart(body);
+        this.http.route("get", "/dashboard/performanceByRegionChart", false, async () => {
+            return this.dashboardController.performanceByRegionChart();
         });
 
         this.http.route("post", "/dashboard/salesByChannelDescriptionChart", false, async (params: any, body: any) => {

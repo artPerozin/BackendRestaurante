@@ -3,7 +3,7 @@
  * tags:
  *   name: Dashboard
  *   description: Endpoints para gráficos e métricas do dashboard
- * 
+ *
  * components:
  *   schemas:
  *     TemporalInput:
@@ -22,7 +22,7 @@
  *           format: date-time
  *           description: Data de fim do período
  *           example: "2024-01-31 23:59:59"
- * 
+ *
  *     CashFlowData:
  *       type: object
  *       properties:
@@ -44,7 +44,7 @@
  *           type: number
  *         average_ticket:
  *           type: number
- * 
+ *
  *     DeliveryLocation:
  *       type: object
  *       properties:
@@ -52,7 +52,7 @@
  *           type: number
  *         lng:
  *           type: number
- * 
+ *
  *     PaymentByType:
  *       type: object
  *       properties:
@@ -60,7 +60,7 @@
  *           type: string
  *         valor_total:
  *           type: number
- * 
+ *
  *     RegionPerformance:
  *       type: object
  *       properties:
@@ -74,7 +74,7 @@
  *           type: number
  *         p90DeliveryMinutes:
  *           type: number
- * 
+ *
  *     SalesByChannelDescription:
  *       type: object
  *       properties:
@@ -82,7 +82,7 @@
  *           type: string
  *         total_sales:
  *           type: integer
- * 
+ *
  *     TopItem:
  *       type: object
  *       properties:
@@ -92,12 +92,25 @@
  *           type: integer
  *         revenue_generated:
  *           type: number
- * 
+ *
+ *     CustomerRetentionDTO:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: string
+ *           description: Status do cliente ("fiel" ou "perdido")
+ *           example: "fiel"
+ *         quantidade:
+ *           type: integer
+ *           description: Quantidade de clientes naquele status
+ *           example: 10
+ *
  *     ErrorResponse:
  *       type: object
  *       properties:
  *         message:
  *           type: string
+ *           example: "Sem dados para query"
  */
 
 /**
@@ -127,10 +140,7 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
- */
-
-/**
- * @swagger
+ *
  * /dashboard/deliveryLocationsChart:
  *   post:
  *     summary: Retorna as coordenadas geográficas das entregas
@@ -156,10 +166,7 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
- */
-
-/**
- * @swagger
+ *
  * /dashboard/paymentsByTypeChart:
  *   post:
  *     summary: Retorna o gráfico de pagamentos por tipo
@@ -185,20 +192,11 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
- */
-
-/**
- * @swagger
+ *
  * /dashboard/performanceByRegionChart:
- *   post:
+ *   get:
  *     summary: Retorna o gráfico de desempenho de entregas por região
  *     tags: [Dashboard]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/TemporalInput'
  *     responses:
  *       200:
  *         description: Dados de performance por região retornados com sucesso
@@ -209,15 +207,12 @@
  *               items:
  *                 $ref: '#/components/schemas/RegionPerformance'
  *       422:
- *         description: Erro de validação ou ausência de dados
+ *         description: Erro de ausência de dados
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
- */
-
-/**
- * @swagger
+ *
  * /dashboard/salesByChannelDescriptionChart:
  *   post:
  *     summary: Retorna o gráfico de vendas por descrição específica do canal
@@ -243,10 +238,7 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
- */
-
-/**
- * @swagger
+ *
  * /dashboard/topItemsChart:
  *   post:
  *     summary: Retorna os 20 itens adicionais mais vendidos
@@ -273,44 +265,7 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
- */
-
-/**
- * @swagger
- * components:
- *   schemas:
- *     CustomerRetentionInput:
- *       type: object
- *       required:
- *         - start_date
- *         - end_date
- *       properties:
- *         start_date:
- *           type: string
- *           format: date-time
- *           description: Data de início do período
- *           example: "2025-01-01 00:00:00"
- *         end_date:
- *           type: string
- *           format: date-time
- *           description: Data de fim do período
- *           example: "2025-01-31 23:59:59"
- * 
- *     CustomerRetentionDTO:
- *       type: object
- *       properties:
- *         status:
- *           type: string
- *           description: Status do cliente ("fiel" ou "perdido")
- *           example: "fiel"
- *         quantidade:
- *           type: integer
- *           description: Quantidade de clientes naquele status
- *           example: 10
- */
-
-/**
- * @swagger
+ *
  * /dashboard/customerRetention:
  *   post:
  *     summary: Retorna a retenção de clientes por status ("fiel" ou "perdido")
@@ -320,7 +275,7 @@
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/CustomerRetentionInput'
+ *             $ref: '#/components/schemas/TemporalInput'
  *     responses:
  *       200:
  *         description: Dados de retenção de clientes retornados com sucesso
@@ -334,19 +289,12 @@
  *                   items:
  *                     $ref: '#/components/schemas/CustomerRetentionDTO'
  *       422:
- *         description: Erro de validação ou ausência de dados
+ *         description: Erro de ausência de dados
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "Sem dados para query"
- */
-
-/**
- * @swagger
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *
  * /dashboard/weeklyAverageTicket:
  *   get:
  *     summary: Retorna o ticket médio da semana
