@@ -16,7 +16,6 @@ describe("CustomerRetention", () => {
             getCashFlow: jest.fn(),
             getPerformanceByRegion: jest.fn(),
             getTopItems: jest.fn(),
-            getDeliveryLocations: jest.fn(),
             getSalesByChannelDescription: jest.fn(),
             getPaymentsByType: jest.fn(),
             getWeeklyAverageTicket: jest.fn(),

@@ -5,9 +5,6 @@ import CashFlowChartOutput from "../../useCases/cashFlowChart/CashFlowChartOutpu
 import CustomerRetention from "../../useCases/customerRetention/CustomerRetention";
 import CustomerRetentionInput from "../../useCases/customerRetention/CustomerRetentionInput";
 import CustomerRetentionOutput from "../../useCases/customerRetention/CustomerRetentionOutput";
-import DeliveryLocationsChart from "../../useCases/deliveryLocationsChart/DeliveryLocationsChart";
-import DeliveryLocationsChartInput from "../../useCases/deliveryLocationsChart/DeliveryLocationsChartInput";
-import DeliveryLocationsChartOutput from "../../useCases/deliveryLocationsChart/DeliveryLocationsChartOutput";
 import PaymentsByTypeChartChart from "../../useCases/paymentsByTypeChart/PaymentsByTypeChart";
 import PaymentsByTypeChartInput from "../../useCases/paymentsByTypeChart/PaymentsByTypeChartInput";
 import PaymentsByTypeChartOutput from "../../useCases/paymentsByTypeChart/PaymentsByTypeChartOutput";
@@ -33,11 +30,6 @@ export default class DashboardController {
     async cashFlowChart(input: CashFlowChartInput): Promise<CashFlowChartOutput> {
         const cashFlowChart = new CashFlowChart(this.repositoryFactory);
         return await cashFlowChart.execute(input);
-    }
-    
-    async deliveryLocationsChart(input: DeliveryLocationsChartInput): Promise<DeliveryLocationsChartOutput> {
-        const deliveryLocationsChart = new DeliveryLocationsChart(this.repositoryFactory);
-        return await deliveryLocationsChart.execute(input);
     }
 
     async paymentsByTypeChart(input: PaymentsByTypeChartInput): Promise<PaymentsByTypeChartOutput> {

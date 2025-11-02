@@ -1,6 +1,5 @@
 import { CashFlowByDayDTO } from "../../../domain/DTO/CashFlowByDayDto";
 import { CustomerRetentionDTO } from "../../../domain/DTO/CustomerRetentionDto";
-import { DeliveryLocationDTO } from "../../../domain/DTO/DeliveryLocationDto";
 import { PaymentsByTypeDTO } from "../../../domain/DTO/PaymentsByTypeDto";
 import { RegionPerformanceDTO } from "../../../domain/DTO/RegionPerformanceDto";
 import { SalesByChannelDescriptionDTO } from "../../../domain/DTO/SalesByChannelDescriptionDto";
@@ -29,7 +28,7 @@ export default class DashboardRepositoryDatabase implements DashboardRepositoryI
               AND s.delivery_seconds IS NOT NULL
             GROUP BY da.neighborhood, da.city
             HAVING COUNT(*) >= 10
-            ORDER BY avg_delivery_minutes ASC
+            ORDER BY avg_delivery_minutes DESC
             LIMIT 100;
         `;
 
@@ -57,49 +56,6 @@ export default class DashboardRepositoryDatabase implements DashboardRepositoryI
 
         const result = await this.connection.execute(query, [period.start_date, period.end_date]);
         return result.map((row: any) => new TopItemDTO(row));
-    }
-
-    async getDeliveryLocations(period: TemporalInputDto): Promise<DeliveryLocationDTO[]> {
-        const query = `
-            SELECT
-                da.latitude AS lat,
-                da.longitude AS lng
-            FROM delivery_addresses da
-            JOIN sales s ON s.id = da.sale_id
-            WHERE s.sale_status_desc = 'COMPLETED'
-              AND s.created_at >= $1
-              AND s.created_at <= $2
-            LIMIT 100
-        `;
-
-        const result = await this.connection.execute(query, [period.start_date, period.end_date]);
-        return result.map((row: any) => new DeliveryLocationDTO(row));
-    }
-
-    async getCashFlow(period: TemporalInputDto): Promise<CashFlowByDayDTO[]> {
-        const query = `
-            SELECT 
-                DATE(s.created_at) AS day,
-                SUM(s.total_amount_items) AS total_sales_amount,
-                SUM(s.value_paid) AS total_value_paid,
-                SUM(s.total_discount) AS total_discount,
-                SUM(s.total_increase) AS total_increase,
-                SUM(s.delivery_fee) AS total_delivery_fee,
-                SUM(s.service_tax_fee) AS total_service_tax_fee,
-                CASE WHEN COUNT(*) > 0 
-                    THEN SUM(s.total_amount) / COUNT(*) 
-                    ELSE 0 
-                END AS average_ticket
-            FROM sales s
-            WHERE s.created_at >= $1
-              AND s.created_at <= $2
-              AND s.sale_status_desc = 'COMPLETED'
-            GROUP BY DATE(s.created_at)
-            ORDER BY DATE(s.created_at);
-        `;
-
-        const result = await this.connection.execute(query, [period.start_date, period.end_date]);
-        return result.map((row: any) => new CashFlowByDayDTO(row));
     }
 
     async getSalesByChannelDescription(period: TemporalInputDto): Promise<SalesByChannelDescriptionDTO[]> {
@@ -165,24 +121,26 @@ export default class DashboardRepositoryDatabase implements DashboardRepositoryI
         return result.map((row: any) => new PaymentsByTypeDTO(row));
     }
 
-    async getWeeklyAverageTicket(): Promise<WeeklyAverageTicketDTO[]> {
-        const query = `
-            SELECT COALESCE(SUM(value_paid) / COUNT(*), 0) AS ticket_medio
-            FROM sales
-            WHERE created_at >= NOW() - INTERVAL '7 days';
-        `;
-        const result = await this.connection.execute(query);
-        return result.map((row: any) => new WeeklyAverageTicketDTO(row));    
-    }
-
     async getWeeklyRevenue(): Promise<WeeklyRevenueDTO[]> {
         const query = `
             SELECT COALESCE(SUM(value_paid), 0) AS faturamento
             FROM sales
-            WHERE created_at >= NOW() - INTERVAL '7 days';
+            WHERE created_at >= DATE_TRUNC('day', NOW() - INTERVAL '7 days')
+            AND created_at < DATE_TRUNC('day', NOW() + INTERVAL '1 day');
         `;
         const result = await this.connection.execute(query);
         return result.map((row: any) => new WeeklyRevenueDTO(row));
+    }
+
+    async getWeeklyAverageTicket(): Promise<WeeklyAverageTicketDTO[]> {
+        const query = `
+            SELECT COALESCE(SUM(value_paid) / NULLIF(COUNT(*), 0), 0) AS ticket_medio
+            FROM sales
+            WHERE created_at >= DATE_TRUNC('day', NOW() - INTERVAL '7 days')
+            AND created_at < DATE_TRUNC('day', NOW() + INTERVAL '1 day');
+        `;
+        const result = await this.connection.execute(query);
+        return result.map((row: any) => new WeeklyAverageTicketDTO(row));    
     }
 
     async getWeeklyDeliveries(): Promise<WeeklyDeliveriesDTO[]> {
@@ -191,9 +149,43 @@ export default class DashboardRepositoryDatabase implements DashboardRepositoryI
             FROM delivery_sales ds
             JOIN sales s ON s.id = ds.sale_id
             WHERE ds.status = 'DELIVERED' 
-            AND s.created_at >= NOW() - INTERVAL '30 days';
+            AND s.created_at >= DATE_TRUNC('day', NOW() - INTERVAL '7 days')
+            AND s.created_at < DATE_TRUNC('day', NOW() + INTERVAL '1 day');
         `;
         const result = await this.connection.execute(query);
         return [new WeeklyDeliveriesDTO(result[0])];
+    }
+
+    async getCashFlow(period: TemporalInputDto): Promise<CashFlowByDayDTO[]> {
+        // Se não vier período, usa os últimos 8 dias como padrão (do dia 26 até hoje)
+        const startDate = period.start_date ?? (() => {
+            const date = new Date();
+            date.setDate(date.getDate() - 7);
+            date.setHours(0, 0, 0, 0);
+            return date;
+        })();
+        
+        const endDate = period.end_date ?? (() => {
+            const date = new Date();
+            date.setHours(23, 59, 59, 999);
+            return date;
+        })();
+        
+        const query = `
+            SELECT 
+                DATE(s.created_at) AS day,
+                COUNT(*) AS total_sales,
+                COALESCE(SUM(s.value_paid), 0) AS total_value_paid,
+                COALESCE(AVG(s.value_paid), 0) AS average_ticket
+            FROM sales s
+            WHERE s.sale_status_desc = 'COMPLETED'
+            AND s.created_at >= $1::timestamp
+            AND s.created_at <= $2::timestamp
+            GROUP BY DATE(s.created_at)
+            ORDER BY day;
+        `;
+        
+        const result = await this.connection.execute(query, [startDate, endDate]);
+        return result.map((row: any) => new CashFlowByDayDTO(row));
     }
 }

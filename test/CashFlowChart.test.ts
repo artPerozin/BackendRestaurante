@@ -15,7 +15,6 @@ describe("CashFlowChart", () => {
             getCashFlow: jest.fn(),
             getPerformanceByRegion: jest.fn(),
             getTopItems: jest.fn(),
-            getDeliveryLocations: jest.fn(),
             getSalesByChannelDescription: jest.fn(),
             getPaymentsByType: jest.fn(),
             getCustomerRetention: jest.fn(),
