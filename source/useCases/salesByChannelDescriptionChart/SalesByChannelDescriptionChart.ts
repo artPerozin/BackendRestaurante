@@ -12,7 +12,7 @@ export default class SalesByChannelDescriptionChart {
     }
 
     async execute(input: SalesByChannelDescriptionChartInput): Promise<SalesByChannelDescriptionChartOutput> {
-        const data = await this.dashboard.getSalesByChannelDescription(input.days);
+        const data = await this.dashboard.getSalesByChannelDescription(input.data);
         if (!data || data.length === 0) {
             throw new Error("Sem dados para query");
         }

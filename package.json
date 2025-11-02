@@ -22,12 +22,12 @@
     },
     "name": "backendrestaurante",
     "version": "0.0.1",
-    "main": "dist/main.js",
+    "main": "dist/source/main.js",
     "author": "perozin.arthur@gmail.com",
     "scripts": {
         "test": "jest --runInBand test/",
         "clean": "rm -rf dist/*/",
-        "main": "tsc && node ./dist/main.js"
+        "main": "tsc && node ./dist/source/main.js"
     },
     "devDependencies": {
         "@types/jest": "^30.0.0",

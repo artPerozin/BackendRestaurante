@@ -12,7 +12,7 @@ export default class DeliveryLocationsChart {
     }
 
     async execute(input: DeliveryLocationsChartInput): Promise<DeliveryLocationsChartOutput> {
-        const data = await this.dashboard.getDeliveryLocations(input.days);
+        const data = await this.dashboard.getDeliveryLocations(input.data);
         if (!data || data.length === 0) {
             throw new Error("Sem dados para query");
         }

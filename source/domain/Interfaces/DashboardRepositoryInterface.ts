@@ -5,14 +5,16 @@ import { RegionPerformanceDTO } from "../DTO/RegionPerformanceDto";
 import { SalesByChannelDescriptionDTO } from "../DTO/SalesByChannelDescriptionDto";
 import { SalesByChannelTypeDTO } from "../DTO/SalesByChannelTypeDto";
 import { TopItemDTO } from "../DTO/TopItemDto";
-import { TemporalEnum } from "../Enums/TemporalEnum";
+import { TemporalInputDto } from "../DTO/TemporalInputDto";
+import { CustomerRetentionDTO } from "../DTO/CustomerRetentionDto";
 
 export default interface DashboardRepositoryInterface {
-    getPerformanceByRegion(days: TemporalEnum): Promise<RegionPerformanceDTO[]>
-    getTopItems(days: TemporalEnum): Promise<TopItemDTO[]>
-    getDeliveryLocations(days: TemporalEnum): Promise<DeliveryLocationDTO[]>
-    getCashFlow(days: TemporalEnum): Promise<CashFlowByDayDTO[]>
-    getSalesByChannelType(days: TemporalEnum): Promise<SalesByChannelTypeDTO[]>
-    getSalesByChannelDescription(days: TemporalEnum): Promise<SalesByChannelDescriptionDTO[]>
-    getPaymentsByType(days: TemporalEnum): Promise<PaymentsByTypeDTO[]>
+    getPerformanceByRegion(data: TemporalInputDto): Promise<RegionPerformanceDTO[]>
+    getTopItems(data: TemporalInputDto): Promise<TopItemDTO[]>
+    getDeliveryLocations(data: TemporalInputDto): Promise<DeliveryLocationDTO[]>
+    getCashFlow(data: TemporalInputDto): Promise<CashFlowByDayDTO[]>
+    getSalesByChannelType(data: TemporalInputDto): Promise<SalesByChannelTypeDTO[]>
+    getSalesByChannelDescription(data: TemporalInputDto): Promise<SalesByChannelDescriptionDTO[]>
+    getPaymentsByType(data: TemporalInputDto): Promise<PaymentsByTypeDTO[]>
+    getCustomerRetention(data: TemporalInputDto): Promise<CustomerRetentionDTO[]>
 }

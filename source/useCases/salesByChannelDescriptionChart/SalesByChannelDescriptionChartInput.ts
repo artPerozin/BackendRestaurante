@@ -1,5 +1,5 @@
-import { TemporalEnum } from "../../domain/Enums/TemporalEnum";
+import { TemporalInputDto } from "../../domain/DTO/TemporalInputDto";
 
 export default interface SalesByChannelDescriptionChartInput {
-    days: TemporalEnum
+    data: TemporalInputDto
 }

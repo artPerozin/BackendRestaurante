@@ -26,7 +26,8 @@ async function bootstrap() {
 
     router.init();
     http.listen(port);
-    console.log(`Running on ${port}`);
+    console.log(`🍳 Rodando app em http://localhost:${port}`);
+    console.log(`Bon apetit`);
 }
 
 bootstrap();

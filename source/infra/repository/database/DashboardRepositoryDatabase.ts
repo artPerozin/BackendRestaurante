@@ -6,14 +6,14 @@ import { RegionPerformanceDTO } from "../../../domain/DTO/RegionPerformanceDto";
 import { SalesByChannelDescriptionDTO } from "../../../domain/DTO/SalesByChannelDescriptionDto";
 import { SalesByChannelTypeDTO } from "../../../domain/DTO/SalesByChannelTypeDto";
 import { TopItemDTO } from "../../../domain/DTO/TopItemDto";
-import { TemporalEnum } from "../../../domain/Enums/TemporalEnum";
+import { TemporalInputDto } from "../../../domain/DTO/TemporalInputDto";
 import DashboardRepositoryInterface from "../../../domain/Interfaces/DashboardRepositoryInterface";
 import Connection from "../../database/Connection";
 
 export default class DashboardRepositoryDatabase implements DashboardRepositoryInterface {
-    constructor(protected connection: Connection) {}
+    constructor(protected readonly connection: Connection) {}
 
-    async getPerformanceByRegion(days: TemporalEnum): Promise<RegionPerformanceDTO[]> {
+    async getPerformanceByRegion(period: TemporalInputDto): Promise<RegionPerformanceDTO[]> {
         const query = `
             SELECT 
                 da.neighborhood,
@@ -25,17 +25,18 @@ export default class DashboardRepositoryDatabase implements DashboardRepositoryI
             JOIN delivery_addresses da ON da.sale_id = s.id
             WHERE s.sale_status_desc = 'COMPLETED'
               AND s.delivery_seconds IS NOT NULL
-              AND s.created_at >= NOW() - INTERVAL $1 DAY
+              AND s.created_at >= $1
+              AND s.created_at <= $2
             GROUP BY da.neighborhood, da.city
             HAVING COUNT(*) >= 10
-            ORDER BY avg_delivery_minutes DESC
+            ORDER BY avg_delivery_minutes DESC;
         `;
 
-        const result = await this.connection.execute(query, [days]);
+        const result = await this.connection.execute(query, [period.start_date, period.end_date]);
         return result.map((row: any) => new RegionPerformanceDTO(row));
     }
 
-    async getTopItems(days: TemporalEnum): Promise<TopItemDTO[]> {
+    async getTopItems(period: TemporalInputDto): Promise<TopItemDTO[]> {
         const query = `
             SELECT 
                 i.name AS item,
@@ -46,17 +47,18 @@ export default class DashboardRepositoryDatabase implements DashboardRepositoryI
             JOIN product_sales ps ON ps.id = ips.product_sale_id
             JOIN sales s ON s.id = ps.sale_id
             WHERE s.sale_status_desc = 'COMPLETED'
-              AND s.created_at >= NOW() - INTERVAL $1 DAY
+              AND s.created_at >= $1
+              AND s.created_at <= $2
             GROUP BY i.name
             ORDER BY times_added DESC
-            LIMIT 20
+            LIMIT 20;
         `;
 
-        const result = await this.connection.execute(query, [days]);
+        const result = await this.connection.execute(query, [period.start_date, period.end_date]);
         return result.map((row: any) => new TopItemDTO(row));
     }
 
-    async getDeliveryLocations(days: TemporalEnum): Promise<DeliveryLocationDTO[]> {
+    async getDeliveryLocations(period: TemporalInputDto): Promise<DeliveryLocationDTO[]> {
         const query = `
             SELECT
                 da.latitude AS lat,
@@ -64,14 +66,15 @@ export default class DashboardRepositoryDatabase implements DashboardRepositoryI
             FROM delivery_addresses da
             JOIN sales s ON s.id = da.sale_id
             WHERE s.sale_status_desc = 'COMPLETED'
-              AND s.created_at >= NOW() - INTERVAL $1 DAY
+              AND s.created_at >= $1
+              AND s.created_at <= $2;
         `;
 
-        const result = await this.connection.execute(query, [days]);
+        const result = await this.connection.execute(query, [period.start_date, period.end_date]);
         return result.map((row: any) => new DeliveryLocationDTO(row));
     }
 
-    async getCashFlow(days: TemporalEnum): Promise<CashFlowByDayDTO[]> {
+    async getCashFlow(period: TemporalInputDto): Promise<CashFlowByDayDTO[]> {
         const query = `
             SELECT 
                 DATE(s.created_at) AS day,
@@ -83,19 +86,21 @@ export default class DashboardRepositoryDatabase implements DashboardRepositoryI
                 SUM(s.service_tax_fee) AS total_service_tax_fee,
                 CASE WHEN COUNT(*) > 0 
                     THEN SUM(s.total_amount) / COUNT(*) 
-                    ELSE 0 END AS average_ticket
+                    ELSE 0 
+                END AS average_ticket
             FROM sales s
-            WHERE s.created_at >= NOW() - INTERVAL $1 DAY
+            WHERE s.created_at >= $1
+              AND s.created_at <= $2
               AND s.sale_status_desc = 'COMPLETED'
             GROUP BY DATE(s.created_at)
             ORDER BY DATE(s.created_at);
         `;
 
-        const result = await this.connection.execute(query, [days]);
+        const result = await this.connection.execute(query, [period.start_date, period.end_date]);
         return result.map((row: any) => new CashFlowByDayDTO(row));
     }
 
-    async getSalesByChannelType(days: TemporalEnum): Promise<SalesByChannelTypeDTO[]> {
+    async getSalesByChannelType(period: TemporalInputDto): Promise<SalesByChannelTypeDTO[]> {
         const query = `
             SELECT
                 c.type,
@@ -107,16 +112,17 @@ export default class DashboardRepositoryDatabase implements DashboardRepositoryI
             FROM sales s
             JOIN channels c ON c.id = s.channel_id
             WHERE s.sale_status_desc = 'COMPLETED'
-              AND s.created_at >= NOW() - INTERVAL $1 DAY
+              AND s.created_at >= $1
+              AND s.created_at <= $2
             GROUP BY c.type
             ORDER BY total_sales DESC;
         `;
 
-        const result = await this.connection.execute(query, [days]);
+        const result = await this.connection.execute(query, [period.start_date, period.end_date]);
         return result.map((row: any) => new SalesByChannelTypeDTO(row));
     }
 
-    async getSalesByChannelDescription(days: TemporalEnum): Promise<SalesByChannelDescriptionDTO[]> {
+    async getSalesByChannelDescription(period: TemporalInputDto): Promise<SalesByChannelDescriptionDTO[]> {
         const query = `
             SELECT
                 c.description,
@@ -124,16 +130,17 @@ export default class DashboardRepositoryDatabase implements DashboardRepositoryI
             FROM sales s
             JOIN channels c ON c.id = s.channel_id
             WHERE s.sale_status_desc = 'COMPLETED'
-              AND s.created_at >= NOW() - INTERVAL $1 DAY
+              AND s.created_at >= $1
+              AND s.created_at <= $2
             GROUP BY c.description
             ORDER BY total_sales DESC;
         `;
 
-        const result = await this.connection.execute(query, [days]);
+        const result = await this.connection.execute(query, [period.start_date, period.end_date]);
         return result.map((row: any) => new SalesByChannelDescriptionDTO(row));
     }
 
-    async getCustomerRetention(): Promise<CustomerRetentionDTO[]> {
+    async getCustomerRetention(period: TemporalInputDto): Promise<CustomerRetentionDTO[]> {
         const query = `
             WITH last_order_per_customer AS (
                 SELECT
@@ -141,11 +148,13 @@ export default class DashboardRepositoryDatabase implements DashboardRepositoryI
                     MAX(created_at) AS last_order_date
                 FROM sales
                 WHERE customer_id IS NOT NULL
+                  AND created_at >= $1
+                  AND created_at <= $2
                 GROUP BY customer_id
             )
             SELECT
                 CASE
-                    WHEN last_order_date < NOW() - INTERVAL '30 days' THEN 'perdido'
+                    WHEN last_order_date < $2 - INTERVAL '30 days' THEN 'perdido'
                     ELSE 'fiel'
                 END AS status,
                 COUNT(*) AS quantidade
@@ -153,11 +162,11 @@ export default class DashboardRepositoryDatabase implements DashboardRepositoryI
             GROUP BY status;
         `;
 
-        const result = await this.connection.execute(query);
+        const result = await this.connection.execute(query, [period.start_date, period.end_date]);
         return result.map((row: any) => new CustomerRetentionDTO(row));
     }
 
-    async getPaymentsByType(days: TemporalEnum): Promise<PaymentsByTypeDTO[]> {
+    async getPaymentsByType(period: TemporalInputDto): Promise<PaymentsByTypeDTO[]> {
         const query = `
             SELECT
                 pt.description AS tipo_pagamento,
@@ -165,12 +174,14 @@ export default class DashboardRepositoryDatabase implements DashboardRepositoryI
             FROM payments p
             JOIN payment_types pt ON pt.id = p.payment_type_id
             JOIN sales s ON s.id = p.sale_id
-            WHERE s.created_at >= NOW() - INTERVAL $1 DAY
+            WHERE s.sale_status_desc = 'COMPLETED'
+              AND s.created_at >= $1
+              AND s.created_at <= $2
             GROUP BY pt.description
             ORDER BY valor_total DESC;
         `;
 
-        const result = await this.connection.execute(query, [days]);
+        const result = await this.connection.execute(query, [period.start_date, period.end_date]);
         return result.map((row: any) => new PaymentsByTypeDTO(row));
     }
 }

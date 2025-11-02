@@ -12,7 +12,7 @@ export default class PerformanceByRegionChart {
     }
 
     async execute(input: PerformanceByRegionChartInput): Promise<PerformanceByRegionChartOutput> {
-        const data = await this.dashboard.getPerformanceByRegion(input.days);
+        const data = await this.dashboard.getPerformanceByRegion(input.data);
         if (!data || data.length === 0) {
             throw new Error("Sem dados para query");
         }
