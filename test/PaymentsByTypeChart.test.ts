@@ -40,10 +40,6 @@ describe("PaymentsByTypeChartChart", () => {
                 end_date: "2024-01-31 23:59:59",
             });
 
-            const input: PaymentsByTypeChartInput = {
-                data: period,
-            };
-
             const mockPaymentsData: PaymentsByTypeDTO[] = [
                 new PaymentsByTypeDTO({
                     tipo_pagamento: "Cartão de Crédito",
@@ -65,7 +61,7 @@ describe("PaymentsByTypeChartChart", () => {
 
             mockDashboardRepository.getPaymentsByType.mockResolvedValue(mockPaymentsData);
 
-            const result = await useCase.execute(input);
+            const result = await useCase.execute(period);
 
             expect(mockRepositoryFactory.createDashboardRepository).toHaveBeenCalledTimes(1);
             expect(mockDashboardRepository.getPaymentsByType).toHaveBeenCalledWith(period);
@@ -80,13 +76,9 @@ describe("PaymentsByTypeChartChart", () => {
                 end_date: "2024-01-31 23:59:59",
             });
 
-            const input: PaymentsByTypeChartInput = {
-                data: period,
-            };
-
             mockDashboardRepository.getPaymentsByType.mockResolvedValue([]);
 
-            await expect(useCase.execute(input)).rejects.toThrow("Sem dados para query");
+            await expect(useCase.execute(period)).rejects.toThrow("Sem dados para query");
             expect(mockDashboardRepository.getPaymentsByType).toHaveBeenCalledWith(period);
             expect(mockDashboardRepository.getPaymentsByType).toHaveBeenCalledTimes(1);
         });
@@ -97,13 +89,9 @@ describe("PaymentsByTypeChartChart", () => {
                 end_date: "2024-01-31 23:59:59",
             });
 
-            const input: PaymentsByTypeChartInput = {
-                data: period,
-            };
-
             mockDashboardRepository.getPaymentsByType.mockResolvedValue(null as any);
 
-            await expect(useCase.execute(input)).rejects.toThrow("Sem dados para query");
+            await expect(useCase.execute(period)).rejects.toThrow("Sem dados para query");
             expect(mockDashboardRepository.getPaymentsByType).toHaveBeenCalledWith(period);
         });
 
@@ -113,13 +101,9 @@ describe("PaymentsByTypeChartChart", () => {
                 end_date: "2024-01-31 23:59:59",
             });
 
-            const input: PaymentsByTypeChartInput = {
-                data: period,
-            };
-
             mockDashboardRepository.getPaymentsByType.mockResolvedValue(undefined as any);
 
-            await expect(useCase.execute(input)).rejects.toThrow("Sem dados para query");
+            await expect(useCase.execute(period)).rejects.toThrow("Sem dados para query");
             expect(mockDashboardRepository.getPaymentsByType).toHaveBeenCalledWith(period);
         });
 
@@ -129,14 +113,10 @@ describe("PaymentsByTypeChartChart", () => {
                 end_date: "2024-01-31 23:59:59",
             });
 
-            const input: PaymentsByTypeChartInput = {
-                data: period,
-            };
-
             const dbError = new Error("Database connection failed");
             mockDashboardRepository.getPaymentsByType.mockRejectedValue(dbError);
 
-            await expect(useCase.execute(input)).rejects.toThrow("Database connection failed");
+            await expect(useCase.execute(period)).rejects.toThrow("Database connection failed");
             expect(mockDashboardRepository.getPaymentsByType).toHaveBeenCalledWith(period);
         });
 
@@ -145,10 +125,6 @@ describe("PaymentsByTypeChartChart", () => {
                 start_date: "2024-06-01 00:00:00",
                 end_date: "2024-06-30 23:59:59",
             });
-
-            const input: PaymentsByTypeChartInput = {
-                data: period,
-            };
 
             const mockPaymentsData: PaymentsByTypeDTO[] = [
                 new PaymentsByTypeDTO({
@@ -159,7 +135,7 @@ describe("PaymentsByTypeChartChart", () => {
 
             mockDashboardRepository.getPaymentsByType.mockResolvedValue(mockPaymentsData);
 
-            const result = await useCase.execute(input);
+            const result = await useCase.execute(period);
 
             expect(result.data[0]).toHaveProperty('tipo_pagamento');
             expect(result.data[0]).toHaveProperty('valor_total');
@@ -171,10 +147,6 @@ describe("PaymentsByTypeChartChart", () => {
                 start_date: "2024-01-01 00:00:00",
                 end_date: "2024-01-31 23:59:59",
             });
-
-            const input: PaymentsByTypeChartInput = {
-                data: period,
-            };
 
             const mockPaymentsData: PaymentsByTypeDTO[] = [
                 new PaymentsByTypeDTO({
@@ -193,7 +165,7 @@ describe("PaymentsByTypeChartChart", () => {
 
             mockDashboardRepository.getPaymentsByType.mockResolvedValue(mockPaymentsData);
 
-            const result = await useCase.execute(input);
+            const result = await useCase.execute(period);
 
             expect(result.data[0].valor_total).toBeGreaterThanOrEqual(result.data[1].valor_total);
             expect(result.data[1].valor_total).toBeGreaterThanOrEqual(result.data[2].valor_total);
@@ -204,10 +176,6 @@ describe("PaymentsByTypeChartChart", () => {
                 start_date: "2024-01-01 00:00:00",
                 end_date: "2024-01-31 23:59:59",
             });
-
-            const input: PaymentsByTypeChartInput = {
-                data: period,
-            };
 
             const mockPaymentsData: PaymentsByTypeDTO[] = [
                 new PaymentsByTypeDTO({
@@ -234,7 +202,7 @@ describe("PaymentsByTypeChartChart", () => {
 
             mockDashboardRepository.getPaymentsByType.mockResolvedValue(mockPaymentsData);
 
-            const result = await useCase.execute(input);
+            const result = await useCase.execute(period);
 
             expect(result.data).toHaveLength(5);
             const tipos = result.data.map(p => p.tipo_pagamento);

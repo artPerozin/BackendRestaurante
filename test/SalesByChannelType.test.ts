@@ -40,10 +40,6 @@ describe("SalesByChannelTypeChart", () => {
                 end_date: "2024-01-31 23:59:59",
             });
 
-            const input: SalesByChannelTypeChartInput = {
-                data: period,
-            };
-
             const mockSalesData: SalesByChannelTypeDTO[] = [
                 new SalesByChannelTypeDTO({
                     type: "D",
@@ -59,7 +55,7 @@ describe("SalesByChannelTypeChart", () => {
 
             mockDashboardRepository.getSalesByChannelType.mockResolvedValue(mockSalesData);
 
-            const result = await useCase.execute(input);
+            const result = await useCase.execute(period);
 
             expect(mockRepositoryFactory.createDashboardRepository).toHaveBeenCalledTimes(1);
             expect(mockDashboardRepository.getSalesByChannelType).toHaveBeenCalledWith(period);
@@ -74,13 +70,9 @@ describe("SalesByChannelTypeChart", () => {
                 end_date: "2024-01-31 23:59:59",
             });
 
-            const input: SalesByChannelTypeChartInput = {
-                data: period,
-            };
-
             mockDashboardRepository.getSalesByChannelType.mockResolvedValue([]);
 
-            await expect(useCase.execute(input)).rejects.toThrow("Sem dados para query");
+            await expect(useCase.execute(period)).rejects.toThrow("Sem dados para query");
             expect(mockDashboardRepository.getSalesByChannelType).toHaveBeenCalledWith(period);
             expect(mockDashboardRepository.getSalesByChannelType).toHaveBeenCalledTimes(1);
         });
@@ -91,13 +83,9 @@ describe("SalesByChannelTypeChart", () => {
                 end_date: "2024-01-31 23:59:59",
             });
 
-            const input: SalesByChannelTypeChartInput = {
-                data: period,
-            };
-
             mockDashboardRepository.getSalesByChannelType.mockResolvedValue(null as any);
 
-            await expect(useCase.execute(input)).rejects.toThrow("Sem dados para query");
+            await expect(useCase.execute(period)).rejects.toThrow("Sem dados para query");
             expect(mockDashboardRepository.getSalesByChannelType).toHaveBeenCalledWith(period);
         });
 
@@ -107,13 +95,9 @@ describe("SalesByChannelTypeChart", () => {
                 end_date: "2024-01-31 23:59:59",
             });
 
-            const input: SalesByChannelTypeChartInput = {
-                data: period,
-            };
-
             mockDashboardRepository.getSalesByChannelType.mockResolvedValue(undefined as any);
 
-            await expect(useCase.execute(input)).rejects.toThrow("Sem dados para query");
+            await expect(useCase.execute(period)).rejects.toThrow("Sem dados para query");
             expect(mockDashboardRepository.getSalesByChannelType).toHaveBeenCalledWith(period);
         });
 
@@ -123,14 +107,10 @@ describe("SalesByChannelTypeChart", () => {
                 end_date: "2024-01-31 23:59:59",
             });
 
-            const input: SalesByChannelTypeChartInput = {
-                data: period,
-            };
-
             const dbError = new Error("Database connection failed");
             mockDashboardRepository.getSalesByChannelType.mockRejectedValue(dbError);
 
-            await expect(useCase.execute(input)).rejects.toThrow("Database connection failed");
+            await expect(useCase.execute(period)).rejects.toThrow("Database connection failed");
             expect(mockDashboardRepository.getSalesByChannelType).toHaveBeenCalledWith(period);
         });
 
@@ -139,10 +119,6 @@ describe("SalesByChannelTypeChart", () => {
                 start_date: "2024-06-01 00:00:00",
                 end_date: "2024-06-30 23:59:59",
             });
-
-            const input: SalesByChannelTypeChartInput = {
-                data: period,
-            };
 
             const mockSalesData: SalesByChannelTypeDTO[] = [
                 new SalesByChannelTypeDTO({
@@ -159,7 +135,7 @@ describe("SalesByChannelTypeChart", () => {
 
             mockDashboardRepository.getSalesByChannelType.mockResolvedValue(mockSalesData);
 
-            const result = await useCase.execute(input);
+            const result = await useCase.execute(period);
 
             expect(result.data[0].type).toBe("D");
             expect(result.data[0].channelType).toBe("Delivery");
@@ -172,10 +148,6 @@ describe("SalesByChannelTypeChart", () => {
                 start_date: "2024-01-01 00:00:00",
                 end_date: "2024-01-31 23:59:59",
             });
-
-            const input: SalesByChannelTypeChartInput = {
-                data: period,
-            };
 
             const mockSalesData: SalesByChannelTypeDTO[] = [
                 new SalesByChannelTypeDTO({
@@ -192,7 +164,7 @@ describe("SalesByChannelTypeChart", () => {
 
             mockDashboardRepository.getSalesByChannelType.mockResolvedValue(mockSalesData);
 
-            const result = await useCase.execute(input);
+            const result = await useCase.execute(period);
 
             expect(result.data[0].totalSales).toBeGreaterThanOrEqual(result.data[1].totalSales);
         });
@@ -202,10 +174,6 @@ describe("SalesByChannelTypeChart", () => {
                 start_date: "2024-01-01 00:00:00",
                 end_date: "2024-01-31 23:59:59",
             });
-
-            const input: SalesByChannelTypeChartInput = {
-                data: period,
-            };
 
             const mockSalesData: SalesByChannelTypeDTO[] = [
                 new SalesByChannelTypeDTO({
@@ -217,7 +185,7 @@ describe("SalesByChannelTypeChart", () => {
 
             mockDashboardRepository.getSalesByChannelType.mockResolvedValue(mockSalesData);
 
-            const result = await useCase.execute(input);
+            const result = await useCase.execute(period);
 
             expect(result.data).toHaveLength(1);
             expect(result.data[0].type).toBe("D");

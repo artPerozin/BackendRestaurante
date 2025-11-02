@@ -1,5 +1,6 @@
 import { TemporalInputDto } from "../../domain/DTO/TemporalInputDto";
 
 export default interface SalesByChannelTypeChartInput {
-    data: TemporalInputDto;
+    start_date: string
+    end_date:string
 }

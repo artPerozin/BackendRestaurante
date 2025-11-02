@@ -40,10 +40,6 @@ describe("TopItemsChart", () => {
                 end_date: "2024-01-31 23:59:59",
             });
 
-            const input: TopItemsChartInput = {
-                data: period,
-            };
-
             const mockTopItems: TopItemDTO[] = [
                 new TopItemDTO({
                     item: "Bacon Extra",
@@ -69,7 +65,7 @@ describe("TopItemsChart", () => {
 
             mockDashboardRepository.getTopItems.mockResolvedValue(mockTopItems);
 
-            const result = await useCase.execute(input);
+            const result = await useCase.execute(period);
 
             expect(mockRepositoryFactory.createDashboardRepository).toHaveBeenCalledTimes(1);
             expect(mockDashboardRepository.getTopItems).toHaveBeenCalledWith(period);
@@ -84,13 +80,9 @@ describe("TopItemsChart", () => {
                 end_date: "2024-01-31 23:59:59",
             });
 
-            const input: TopItemsChartInput = {
-                data: period,
-            };
-
             mockDashboardRepository.getTopItems.mockResolvedValue([]);
 
-            await expect(useCase.execute(input)).rejects.toThrow("Sem dados para query");
+            await expect(useCase.execute(period)).rejects.toThrow("Sem dados para query");
             expect(mockDashboardRepository.getTopItems).toHaveBeenCalledWith(period);
             expect(mockDashboardRepository.getTopItems).toHaveBeenCalledTimes(1);
         });
@@ -101,13 +93,9 @@ describe("TopItemsChart", () => {
                 end_date: "2024-01-31 23:59:59",
             });
 
-            const input: TopItemsChartInput = {
-                data: period,
-            };
-
             mockDashboardRepository.getTopItems.mockResolvedValue(null as any);
 
-            await expect(useCase.execute(input)).rejects.toThrow("Sem dados para query");
+            await expect(useCase.execute(period)).rejects.toThrow("Sem dados para query");
             expect(mockDashboardRepository.getTopItems).toHaveBeenCalledWith(period);
         });
 
@@ -117,13 +105,9 @@ describe("TopItemsChart", () => {
                 end_date: "2024-01-31 23:59:59",
             });
 
-            const input: TopItemsChartInput = {
-                data: period,
-            };
-
             mockDashboardRepository.getTopItems.mockResolvedValue(undefined as any);
 
-            await expect(useCase.execute(input)).rejects.toThrow("Sem dados para query");
+            await expect(useCase.execute(period)).rejects.toThrow("Sem dados para query");
             expect(mockDashboardRepository.getTopItems).toHaveBeenCalledWith(period);
         });
 
@@ -133,14 +117,10 @@ describe("TopItemsChart", () => {
                 end_date: "2024-01-31 23:59:59",
             });
 
-            const input: TopItemsChartInput = {
-                data: period,
-            };
-
             const dbError = new Error("Database connection failed");
             mockDashboardRepository.getTopItems.mockRejectedValue(dbError);
 
-            await expect(useCase.execute(input)).rejects.toThrow("Database connection failed");
+            await expect(useCase.execute(period)).rejects.toThrow("Database connection failed");
             expect(mockDashboardRepository.getTopItems).toHaveBeenCalledWith(period);
         });
 
@@ -149,10 +129,6 @@ describe("TopItemsChart", () => {
                 start_date: "2024-01-01 00:00:00",
                 end_date: "2024-01-31 23:59:59",
             });
-
-            const input: TopItemsChartInput = {
-                data: period,
-            };
 
             const mockTopItems: TopItemDTO[] = Array.from({ length: 20 }, (_, i) => 
                 new TopItemDTO({
@@ -164,7 +140,7 @@ describe("TopItemsChart", () => {
 
             mockDashboardRepository.getTopItems.mockResolvedValue(mockTopItems);
 
-            const result = await useCase.execute(input);
+            const result = await useCase.execute(period);
 
             expect(result.data).toHaveLength(20);
             expect(result.data.length).toBeLessThanOrEqual(20);
@@ -175,10 +151,6 @@ describe("TopItemsChart", () => {
                 start_date: "2024-06-01 00:00:00",
                 end_date: "2024-06-30 23:59:59",
             });
-
-            const input: TopItemsChartInput = {
-                data: period,
-            };
 
             const mockTopItems: TopItemDTO[] = [
                 new TopItemDTO({
@@ -200,7 +172,7 @@ describe("TopItemsChart", () => {
 
             mockDashboardRepository.getTopItems.mockResolvedValue(mockTopItems);
 
-            const result = await useCase.execute(input);
+            const result = await useCase.execute(period);
 
             expect(result.data[0].timesAdded).toBeGreaterThanOrEqual(result.data[1].timesAdded);
             expect(result.data[1].timesAdded).toBeGreaterThanOrEqual(result.data[2].timesAdded);
@@ -212,10 +184,6 @@ describe("TopItemsChart", () => {
                 end_date: "2024-01-31 23:59:59",
             });
 
-            const input: TopItemsChartInput = {
-                data: period,
-            };
-
             const mockTopItems: TopItemDTO[] = [
                 new TopItemDTO({
                     item: "Bacon Extra",
@@ -226,7 +194,7 @@ describe("TopItemsChart", () => {
 
             mockDashboardRepository.getTopItems.mockResolvedValue(mockTopItems);
 
-            const result = await useCase.execute(input);
+            const result = await useCase.execute(period);
 
             expect(result.data[0].item).toBe("Bacon Extra");
             expect(result.data[0].timesAdded).toBe(350);
@@ -239,10 +207,6 @@ describe("TopItemsChart", () => {
                 start_date: "2024-01-01 00:00:00",
                 end_date: "2024-01-31 23:59:59",
             });
-
-            const input: TopItemsChartInput = {
-                data: period,
-            };
 
             const mockTopItems: TopItemDTO[] = [
                 new TopItemDTO({
@@ -259,7 +223,7 @@ describe("TopItemsChart", () => {
 
             mockDashboardRepository.getTopItems.mockResolvedValue(mockTopItems);
 
-            const result = await useCase.execute(input);
+            const result = await useCase.execute(period);
 
             expect(result.data[0].revenueGenerated / result.data[0].timesAdded).toBe(20.00);
             expect(result.data[1].revenueGenerated / result.data[1].timesAdded).toBe(5.00);

@@ -12,7 +12,7 @@ export default class PaymentsByTypeChartChart {
     }
 
     async execute(input: PaymentsByTypeChartInput): Promise<PaymentsByTypeChartOutput> {
-        const data = await this.dashboard.getPaymentsByType(input.data);
+        const data = await this.dashboard.getPaymentsByType(input);
         if (!data || data.length === 0) {
             throw new Error("Sem dados para query");
         }

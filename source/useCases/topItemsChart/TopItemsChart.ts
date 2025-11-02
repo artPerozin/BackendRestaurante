@@ -12,7 +12,7 @@ export default class TopItemsChart {
     }
 
     async execute(input: TopItemsChartInput): Promise<TopItemsChartOutput> {
-        const data = await this.dashboard.getTopItems(input.data);
+        const data = await this.dashboard.getTopItems(input);
         if (!data || data.length === 0) {
             throw new Error("Sem dados para query");
         }

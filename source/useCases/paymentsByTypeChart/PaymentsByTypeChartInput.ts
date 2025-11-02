@@ -1,5 +1,4 @@
-import { TemporalInputDto } from "../../domain/DTO/TemporalInputDto";
-
 export default interface PaymentsByTypeChartInput {
-    data: TemporalInputDto;
+    start_date: string
+    end_date:string
 }
