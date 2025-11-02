@@ -17,9 +17,6 @@ import PerformanceByRegionChartOutput from "../../useCases/performanceByRegionCh
 import SalesByChannelDescriptionChart from "../../useCases/salesByChannelDescriptionChart/SalesByChannelDescriptionChart";
 import SalesByChannelDescriptionChartInput from "../../useCases/salesByChannelDescriptionChart/SalesByChannelDescriptionChartInput";
 import SalesByChannelDescriptionChartOutput from "../../useCases/salesByChannelDescriptionChart/SalesByChannelDescriptionChartOutput";
-import SalesByChannelTypeChart from "../../useCases/salesByChannelTypeChart/SalesByChannelTypeChart";
-import SalesByChannelTypeChartInput from "../../useCases/salesByChannelTypeChart/SalesByChannelTypeChartInput";
-import SalesByChannelTypeChartOutput from "../../useCases/salesByChannelTypeChart/SalesByChannelTypeChartOutput";
 import TopItemsChart from "../../useCases/topItemsChart/TopItemsChart";
 import TopItemsChartInput from "../../useCases/topItemsChart/TopItemsChartInput";
 import TopItemsChartOutput from "../../useCases/topItemsChart/TopItemsChartOutput";
@@ -57,11 +54,6 @@ export default class DashboardController {
     async salesByChannelDescriptionChart(input: SalesByChannelDescriptionChartInput): Promise<SalesByChannelDescriptionChartOutput> {
         const salesByChannelDescriptionChart = new SalesByChannelDescriptionChart(this.repositoryFactory);
         return await salesByChannelDescriptionChart.execute(input);
-    }
-
-    async salesByChannelTypeChart(input: SalesByChannelTypeChartInput): Promise<SalesByChannelTypeChartOutput> {
-        const salesByChannelTypeChart = new SalesByChannelTypeChart(this.repositoryFactory);
-        return await salesByChannelTypeChart.execute(input);
     }
     
     async topItemsChart(input: TopItemsChartInput): Promise<TopItemsChartOutput> {

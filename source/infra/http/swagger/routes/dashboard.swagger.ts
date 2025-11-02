@@ -83,16 +83,6 @@
  *         total_sales:
  *           type: integer
  * 
- *     SalesByChannelType:
- *       type: object
- *       properties:
- *         type:
- *           type: string
- *         channel_type:
- *           type: string
- *         total_sales:
- *           type: integer
- * 
  *     TopItem:
  *       type: object
  *       properties:
@@ -257,35 +247,6 @@
 
 /**
  * @swagger
- * /dashboard/salesByChannelTypeChart:
- *   post:
- *     summary: Retorna o gráfico de vendas por tipo geral de canal
- *     tags: [Dashboard]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/TemporalInput'
- *     responses:
- *       200:
- *         description: Dados de vendas por tipo de canal retornados com sucesso
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/SalesByChannelType'
- *       422:
- *         description: Erro de validação ou ausência de dados
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ErrorResponse'
- */
-
-/**
- * @swagger
  * /dashboard/topItemsChart:
  *   post:
  *     summary: Retorna os 20 itens adicionais mais vendidos
@@ -313,6 +274,7 @@
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
+
 /**
  * @swagger
  * components:
@@ -382,6 +344,7 @@
  *                   type: string
  *                   example: "Sem dados para query"
  */
+
 /**
  * @swagger
  * /dashboard/weeklyAverageTicket:

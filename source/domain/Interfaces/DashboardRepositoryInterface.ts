@@ -3,7 +3,6 @@ import { DeliveryLocationDTO } from "../DTO/DeliveryLocationDto";
 import { PaymentsByTypeDTO } from "../DTO/PaymentsByTypeDto";
 import { RegionPerformanceDTO } from "../DTO/RegionPerformanceDto";
 import { SalesByChannelDescriptionDTO } from "../DTO/SalesByChannelDescriptionDto";
-import { SalesByChannelTypeDTO } from "../DTO/SalesByChannelTypeDto";
 import { TopItemDTO } from "../DTO/TopItemDto";
 import { TemporalInputDto } from "../DTO/TemporalInputDto";
 import { CustomerRetentionDTO } from "../DTO/CustomerRetentionDto";
@@ -16,7 +15,6 @@ export default interface DashboardRepositoryInterface {
     getTopItems(data: TemporalInputDto): Promise<TopItemDTO[]>
     getDeliveryLocations(data: TemporalInputDto): Promise<DeliveryLocationDTO[]>
     getCashFlow(data: TemporalInputDto): Promise<CashFlowByDayDTO[]>
-    getSalesByChannelType(data: TemporalInputDto): Promise<SalesByChannelTypeDTO[]>
     getSalesByChannelDescription(data: TemporalInputDto): Promise<SalesByChannelDescriptionDTO[]>
     getPaymentsByType(data: TemporalInputDto): Promise<PaymentsByTypeDTO[]>
     getCustomerRetention(data: TemporalInputDto): Promise<CustomerRetentionDTO[]>

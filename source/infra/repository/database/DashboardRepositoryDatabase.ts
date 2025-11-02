@@ -4,7 +4,6 @@ import { DeliveryLocationDTO } from "../../../domain/DTO/DeliveryLocationDto";
 import { PaymentsByTypeDTO } from "../../../domain/DTO/PaymentsByTypeDto";
 import { RegionPerformanceDTO } from "../../../domain/DTO/RegionPerformanceDto";
 import { SalesByChannelDescriptionDTO } from "../../../domain/DTO/SalesByChannelDescriptionDto";
-import { SalesByChannelTypeDTO } from "../../../domain/DTO/SalesByChannelTypeDto";
 import { TopItemDTO } from "../../../domain/DTO/TopItemDto";
 import { TemporalInputDto } from "../../../domain/DTO/TemporalInputDto";
 import DashboardRepositoryInterface from "../../../domain/Interfaces/DashboardRepositoryInterface";
@@ -103,29 +102,7 @@ export default class DashboardRepositoryDatabase implements DashboardRepositoryI
         const result = await this.connection.execute(query, [period.start_date, period.end_date]);
         return result.map((row: any) => new CashFlowByDayDTO(row));
     }
-
-    async getSalesByChannelType(period: TemporalInputDto): Promise<SalesByChannelTypeDTO[]> {
-        const query = `
-            SELECT
-                c.type,
-                CASE 
-                    WHEN c.type = 'P' THEN 'Presencial'
-                    WHEN c.type = 'D' THEN 'Delivery'
-                END AS channel_type,
-                COUNT(*) AS total_sales
-            FROM sales s
-            JOIN channels c ON c.id = s.channel_id
-            WHERE s.sale_status_desc = 'COMPLETED'
-              AND s.created_at >= $1
-              AND s.created_at <= $2
-            GROUP BY c.type
-            ORDER BY total_sales DESC;
-        `;
-
-        const result = await this.connection.execute(query, [period.start_date, period.end_date]);
-        return result.map((row: any) => new SalesByChannelTypeDTO(row));
-    }
-
+    
     async getSalesByChannelDescription(period: TemporalInputDto): Promise<SalesByChannelDescriptionDTO[]> {
         const query = `
             SELECT

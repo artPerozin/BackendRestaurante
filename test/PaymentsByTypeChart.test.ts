@@ -16,7 +16,7 @@ describe("PaymentsByTypeChartChart", () => {
             getPerformanceByRegion: jest.fn(),
             getTopItems: jest.fn(),
             getDeliveryLocations: jest.fn(),
-            getSalesByChannelType: jest.fn(),
+
             getSalesByChannelDescription: jest.fn(),
             getCustomerRetention: jest.fn(),
             getPaymentsByType: jest.fn(),
