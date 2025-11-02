@@ -90,16 +90,6 @@ DB_USERNAME=
 DB_PASSWORD=
 ```
 
-4. **Execute as migrações do banco de dados**
-```bash
-npx prisma migrate dev
-```
-
-5. **Gere o Prisma Client**
-```bash
-npx prisma generate
-```
-
 ## 🎮 Como Usar
 
 ### Desenvolvimento

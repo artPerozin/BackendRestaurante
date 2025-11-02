@@ -157,7 +157,6 @@ export default class DashboardRepositoryDatabase implements DashboardRepositoryI
     }
 
     async getCashFlow(period: TemporalInputDto): Promise<CashFlowByDayDTO[]> {
-        // Se não vier período, usa os últimos 8 dias como padrão (do dia 26 até hoje)
         const startDate = period.start_date ?? (() => {
             const date = new Date();
             date.setDate(date.getDate() - 7);
