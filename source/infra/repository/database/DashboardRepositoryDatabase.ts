@@ -9,6 +9,9 @@ import { TopItemDTO } from "../../../domain/DTO/TopItemDto";
 import { TemporalInputDto } from "../../../domain/DTO/TemporalInputDto";
 import DashboardRepositoryInterface from "../../../domain/Interfaces/DashboardRepositoryInterface";
 import Connection from "../../database/Connection";
+import { WeeklyAverageTicketDTO } from "../../../domain/DTO/WeeklyAverageTicketDto";
+import { WeeklyRevenueDTO } from "../../../domain/DTO/WeeklyRevenueDTO ";
+import { WeeklyDeliveriesDTO } from "../../../domain/DTO/WeeklyDeliveriesDTO";
 
 export default class DashboardRepositoryDatabase implements DashboardRepositoryInterface {
     constructor(protected readonly connection: Connection) {}
@@ -67,7 +70,8 @@ export default class DashboardRepositoryDatabase implements DashboardRepositoryI
             JOIN sales s ON s.id = da.sale_id
             WHERE s.sale_status_desc = 'COMPLETED'
               AND s.created_at >= $1
-              AND s.created_at <= $2;
+              AND s.created_at <= $2
+            LIMIT 100
         `;
 
         const result = await this.connection.execute(query, [period.start_date, period.end_date]);
@@ -148,13 +152,13 @@ export default class DashboardRepositoryDatabase implements DashboardRepositoryI
                     MAX(created_at) AS last_order_date
                 FROM sales
                 WHERE customer_id IS NOT NULL
-                  AND created_at >= $1
-                  AND created_at <= $2
+                AND created_at >= $1
+                AND created_at <= $2
                 GROUP BY customer_id
             )
             SELECT
                 CASE
-                    WHEN last_order_date < $2 - INTERVAL '30 days' THEN 'perdido'
+                    WHEN last_order_date < $2::timestamp - INTERVAL '30 days' THEN 'perdido'
                     ELSE 'fiel'
                 END AS status,
                 COUNT(*) AS quantidade
@@ -183,5 +187,37 @@ export default class DashboardRepositoryDatabase implements DashboardRepositoryI
 
         const result = await this.connection.execute(query, [period.start_date, period.end_date]);
         return result.map((row: any) => new PaymentsByTypeDTO(row));
+    }
+
+    async getWeeklyAverageTicket(): Promise<WeeklyAverageTicketDTO[]> {
+        const query = `
+            SELECT COALESCE(SUM(value_paid) / COUNT(*), 0) AS ticket_medio
+            FROM sales
+            WHERE created_at >= NOW() - INTERVAL '7 days';
+        `;
+        const result = await this.connection.execute(query);
+        return result.map((row: any) => new WeeklyAverageTicketDTO(row));    
+    }
+
+    async getWeeklyRevenue(): Promise<WeeklyRevenueDTO[]> {
+        const query = `
+            SELECT COALESCE(SUM(value_paid), 0) AS faturamento
+            FROM sales
+            WHERE created_at >= NOW() - INTERVAL '7 days';
+        `;
+        const result = await this.connection.execute(query);
+        return result.map((row: any) => new WeeklyRevenueDTO(row));
+    }
+
+    async getWeeklyDeliveries(): Promise<WeeklyDeliveriesDTO[]> {
+        const query = `
+            SELECT COUNT(*) AS total_deliveries
+            FROM delivery_sales ds
+            JOIN sales s ON s.id = ds.sale_id
+            WHERE ds.status = 'DELIVERED' 
+            AND s.created_at >= NOW() - INTERVAL '30 days';
+        `;
+        const result = await this.connection.execute(query);
+        return [new WeeklyDeliveriesDTO(result[0])];
     }
 }

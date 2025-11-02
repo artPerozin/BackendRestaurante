@@ -19,7 +19,10 @@ describe("CashFlowChart", () => {
             getSalesByChannelType: jest.fn(),
             getSalesByChannelDescription: jest.fn(),
             getPaymentsByType: jest.fn(),
-            getCustomerRetention: jest.fn()
+            getCustomerRetention: jest.fn(),
+            getWeeklyAverageTicket: jest.fn(),
+            getWeeklyRevenue: jest.fn(),
+            getWeeklyDeliveries: jest.fn(),
         };
 
         mockRepositoryFactory = {

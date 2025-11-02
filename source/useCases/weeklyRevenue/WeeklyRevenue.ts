@@ -1,9 +1,8 @@
 import DashboardRepositoryInterface from "../../domain/Interfaces/DashboardRepositoryInterface";
 import RepositoryFactoryInterface from "../../domain/Interfaces/RepositoryFactoryInterface";
-import CashFlowChartInput from "./CashFlowChartInput";
-import CashFlowChartOutput from "./CashFlowChartOutput";
+import WeeklyRevenueOutput from "./WeeklyRevenueOutput";
 
-export default class CashFlowChart {
+export default class WeeklyRevenue {
 
     readonly dashboard: DashboardRepositoryInterface;
 
@@ -11,8 +10,8 @@ export default class CashFlowChart {
         this.dashboard = repositoryFactory.createDashboardRepository();
     }
 
-    async execute(input: CashFlowChartInput): Promise<CashFlowChartOutput> {
-        const data = await this.dashboard.getCashFlow(input);
+    async execute(): Promise<WeeklyRevenueOutput> {
+        const data = await this.dashboard.getWeeklyRevenue();
         if (!data || data.length === 0) {
             throw new Error("Sem dados para query");
         }

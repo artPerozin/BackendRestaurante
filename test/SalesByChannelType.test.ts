@@ -20,6 +20,9 @@ describe("SalesByChannelTypeChart", () => {
             getSalesByChannelDescription: jest.fn(),
             getCustomerRetention: jest.fn(),
             getPaymentsByType: jest.fn(),
+            getWeeklyAverageTicket: jest.fn(),
+            getWeeklyRevenue: jest.fn(),
+            getWeeklyDeliveries: jest.fn(),
         };
 
         mockRepositoryFactory = {

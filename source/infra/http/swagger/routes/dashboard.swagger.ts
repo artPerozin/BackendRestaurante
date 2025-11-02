@@ -313,3 +313,155 @@
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     CustomerRetentionInput:
+ *       type: object
+ *       required:
+ *         - start_date
+ *         - end_date
+ *       properties:
+ *         start_date:
+ *           type: string
+ *           format: date-time
+ *           description: Data de início do período
+ *           example: "2025-01-01 00:00:00"
+ *         end_date:
+ *           type: string
+ *           format: date-time
+ *           description: Data de fim do período
+ *           example: "2025-01-31 23:59:59"
+ * 
+ *     CustomerRetentionDTO:
+ *       type: object
+ *       properties:
+ *         status:
+ *           type: string
+ *           description: Status do cliente ("fiel" ou "perdido")
+ *           example: "fiel"
+ *         quantidade:
+ *           type: integer
+ *           description: Quantidade de clientes naquele status
+ *           example: 10
+ */
+
+/**
+ * @swagger
+ * /dashboard/customerRetention:
+ *   post:
+ *     summary: Retorna a retenção de clientes por status ("fiel" ou "perdido")
+ *     tags: [Dashboard]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CustomerRetentionInput'
+ *     responses:
+ *       200:
+ *         description: Dados de retenção de clientes retornados com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/CustomerRetentionDTO'
+ *       422:
+ *         description: Erro de validação ou ausência de dados
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Sem dados para query"
+ */
+/**
+ * @swagger
+ * /dashboard/weeklyAverageTicket:
+ *   get:
+ *     summary: Retorna o ticket médio da semana
+ *     tags: [Dashboard]
+ *     responses:
+ *       200:
+ *         description: Ticket médio retornado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       ticket_medio:
+ *                         type: number
+ *                         example: 120.5
+ *       422:
+ *         description: Sem dados para query
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *
+ * /dashboard/weeklyRevenue:
+ *   get:
+ *     summary: Retorna o faturamento da semana
+ *     tags: [Dashboard]
+ *     responses:
+ *       200:
+ *         description: Faturamento retornado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       faturamento:
+ *                         type: number
+ *                         example: 50000
+ *       422:
+ *         description: Sem dados para query
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *
+ * /dashboard/weeklyDeliveries:
+ *   get:
+ *     summary: Retorna a quantidade de deliveries entregues na semana
+ *     tags: [Dashboard]
+ *     responses:
+ *       200:
+ *         description: Quantidade de deliveries retornada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       total_deliveries:
+ *                         type: number
+ *                         example: 320
+ *       422:
+ *         description: Sem dados para query
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
