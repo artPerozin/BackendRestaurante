@@ -76,32 +76,31 @@ export default class DashboardRepositoryDatabase implements DashboardRepositoryI
         return result.map((row: any) => new SalesByChannelDescriptionDTO(row));
     }
 
-    async getCustomerRetention(period: TemporalInputDto): Promise<CustomerRetentionDTO[]> {
+    async getCustomerRetention(): Promise<CustomerRetentionDTO[]> {
         const query = `
-            WITH last_order_per_customer AS (
+            WITH customer_orders AS (
                 SELECT
                     customer_id,
+                    COUNT(*) AS total_orders,
                     MAX(created_at) AS last_order_date
                 FROM sales
                 WHERE customer_id IS NOT NULL
-                AND created_at >= $1
-                AND created_at <= $2
                 GROUP BY customer_id
             )
             SELECT
                 CASE
-                    WHEN last_order_date < $2::timestamp - INTERVAL '30 days' THEN 'perdido'
-                    ELSE 'fiel'
+                    WHEN last_order_date < NOW() - INTERVAL '30 days' THEN 'perdido'
+                    ELSE 'ativo'
                 END AS status,
                 COUNT(*) AS quantidade
-            FROM last_order_per_customer
+            FROM customer_orders
+            WHERE total_orders >= 3
             GROUP BY status;
         `;
 
-        const result = await this.connection.execute(query, [period.start_date, period.end_date]);
+        const result = await this.connection.execute(query);
         return result.map((row: any) => new CustomerRetentionDTO(row));
     }
-
     async getPaymentsByType(period: TemporalInputDto): Promise<PaymentsByTypeDTO[]> {
         const query = `
             SELECT

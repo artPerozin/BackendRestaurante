@@ -14,7 +14,7 @@ export default interface DashboardRepositoryInterface {
     getCashFlow(data: TemporalInputDto): Promise<CashFlowByDayDTO[]>
     getSalesByChannelDescription(data: TemporalInputDto): Promise<SalesByChannelDescriptionDTO[]>
     getPaymentsByType(data: TemporalInputDto): Promise<PaymentsByTypeDTO[]>
-    getCustomerRetention(data: TemporalInputDto): Promise<CustomerRetentionDTO[]>
+    getCustomerRetention(): Promise<CustomerRetentionDTO[]>
     
     getPerformanceByRegion(): Promise<RegionPerformanceDTO[]>
     getWeeklyAverageTicket(): Promise<WeeklyAverageTicketDTO[]>

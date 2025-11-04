@@ -97,8 +97,8 @@
  *       properties:
  *         status:
  *           type: string
- *           description: Status do cliente ("fiel" ou "perdido")
- *           example: "fiel"
+ *           description: Status do cliente ("ativo" ou "perdido")
+ *           example: "ativo"
  *         quantidade:
  *           type: integer
  *           description: Quantidade de clientes naquele status
@@ -240,29 +240,20 @@
  *               $ref: '#/components/schemas/ErrorResponse'
  *
  * /dashboard/customerRetention:
- *   post:
- *     summary: Retorna a retenção de clientes por status ("fiel" ou "perdido")
+ *   get:
+ *     summary: Retorna a retenção de clientes por status ("ativo" ou "perdido")
  *     tags: [Dashboard]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/TemporalInput'
  *     responses:
  *       200:
  *         description: Dados de retenção de clientes retornados com sucesso
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 data:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/CustomerRetentionDTO'
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/CustomerRetentionDTO'
  *       422:
- *         description: Erro de ausência de dados
+ *         description: Sem dados para query
  *         content:
  *           application/json:
  *             schema:

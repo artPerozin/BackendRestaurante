@@ -3,7 +3,6 @@ import CashFlowChart from "../../useCases/cashFlowChart/CashFlowChart";
 import CashFlowChartInput from "../../useCases/cashFlowChart/CashFlowChartInput";
 import CashFlowChartOutput from "../../useCases/cashFlowChart/CashFlowChartOutput";
 import CustomerRetention from "../../useCases/customerRetention/CustomerRetention";
-import CustomerRetentionInput from "../../useCases/customerRetention/CustomerRetentionInput";
 import CustomerRetentionOutput from "../../useCases/customerRetention/CustomerRetentionOutput";
 import PaymentsByTypeChartChart from "../../useCases/paymentsByTypeChart/PaymentsByTypeChart";
 import PaymentsByTypeChartInput from "../../useCases/paymentsByTypeChart/PaymentsByTypeChartInput";
@@ -52,9 +51,9 @@ export default class DashboardController {
         return await topItemsChart.execute(input);
     }
 
-    async customerRetention(input: CustomerRetentionInput): Promise<CustomerRetentionOutput> {
+    async customerRetention(): Promise<CustomerRetentionOutput> {
         const customerRetentionChart = new CustomerRetention(this.repositoryFactory);
-        return await customerRetentionChart.execute(input);
+        return await customerRetentionChart.execute();
     }
 
     async weeklyAverageTicket(): Promise<WeeklyAverageTicketOutput> {

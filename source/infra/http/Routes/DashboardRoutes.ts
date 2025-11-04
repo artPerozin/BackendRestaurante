@@ -31,8 +31,8 @@ export default class DashboardRoutes implements ModelRoutes {
             return this.dashboardController.topItemsChart(body);
         });
         
-        this.http.route("post", "/dashboard/customerRetention", false, async (params: any, body: any) => {
-            return this.dashboardController.customerRetention(body);
+        this.http.route("get", "/dashboard/customerRetention", false, async () => {
+            return this.dashboardController.customerRetention();
         });
 
         this.http.route("get", "/dashboard/weeklyAverageTicket", false, async () => {
